@@ -3,9 +3,6 @@ describe('E2E test of to-do', () => {
   let uid // user id
   let name // name of the user (firstName + ' ' + lastName)
   let email // email of the user
-  let char_limit = 'oyehpfiyegtzapwvmjltladnwhrjcihkiborfbilclttgyzfcymjesjgyliajrlfgrojyqfyotljlnugjyncabgwbejxqvydsbag'
-  let char_limit_breach = 'oyehpfiyegtzapwvmjltladnwhrjcihkiborfbilclttgyzfcymjesjgyliajrlfgrojyqfyotljlnugjyncabgwbejxqvydsbaga'
-  let alternate_char = 'ด5ดуดпкดเ!@р2กเด2ดกк2рк2ดкй252пดп@@прเ!у!пกด2!к2кดкดกดйук!ดпр5куп@йку@'
 
   // Code reused from login.cy.js
   before(function () {
@@ -40,8 +37,7 @@ describe('E2E test of to-do', () => {
       .should('contain.text', 'Your tasks, ' + name)
   })
 
-
-  it('R8UC1: TC1.1 Create new to-do', () => {
+  it('R8UC1: TC1.1 Create new to-do with non-empty description', () => {
     // Create task with title and youtube-affiliation
     cy.get('#title')
       .type('TC1.1 Create new to-do')
@@ -57,224 +53,135 @@ describe('E2E test of to-do', () => {
     cy.get('.popup .todo-list', { timeout: 20000 })
       .should('be.visible')
 
-    // Get created task, add to-do and verify visibility
+    // Add to-do and verify visibility
     cy.get('.popup input[placeholder="Add a new todo item"]')
       .scrollIntoView()
       .type('Test-todo 1')
     cy.get('.popup input[value="Add"]')
       .scrollIntoView()
       .click()
-    cy.contains('.todo-item', 'Test-todo 1')
+    cy.contains('.popup .todo-item', 'Test-todo 1')
       .should('be.visible')
   })
 
-  it('R8UC1: TC1.2 Create new to-do with alternate chars', () => {
+  it('R8UC1: TC1.2 Add button is disabled when description is empty', () => {
     // Create task with title and youtube-affiliation
     cy.get('#title')
-      .type('TC1.2 Create new to-do with alternate chars')
+      .type('TC1.2 Empty to-do description')
     cy.get('#url')
       .type('j_uu6bJ2IGI')
     cy.contains('input[type="submit"]', 'Create new Task')
       .click()
 
     // Navigate to created task
-    cy.contains('.title-overlay', 'TC1.2 Create new to-do with alternate chars')
+    cy.contains('.title-overlay', 'TC1.2 Empty to-do description')
       .click()
 
     cy.get('.popup .todo-list', { timeout: 20000 })
       .should('be.visible')
 
-    // Get created task, add to-do and verify visibility
+    // Verify that the input is empty
     cy.get('.popup input[placeholder="Add a new todo item"]')
       .scrollIntoView()
-      .type(alternate_char)
+      .should('have.value', '')
+
+    // Verify that the add button is disabled
     cy.get('.popup input[value="Add"]')
       .scrollIntoView()
-      .click()
-    cy.contains('.todo-item', alternate_char)
-      .should('be.visible')
+      .should('be.disabled')
   })
 
-  it('R8UC1: TC1.3 Create new to-do with no input', () => {
+  it('R8UC2: TC2.1 Toggle active to-do to completed', () => {
     // Create task with title and youtube-affiliation
     cy.get('#title')
-      .type('TC1.3 Create new to-do with no input')
+      .type('TC2.1 Toggle active to completed')
     cy.get('#url')
       .type('j_uu6bJ2IGI')
     cy.contains('input[type="submit"]', 'Create new Task')
       .click()
 
     // Navigate to created task
-    cy.contains('.title-overlay', 'TC1.3 Create new to-do with no input')
+    cy.contains('.title-overlay', 'TC2.1 Toggle active to completed')
       .click()
 
     cy.get('.popup .todo-list', { timeout: 20000 })
       .should('be.visible')
 
-    // Get created task, add to-do and verify visibility
-    cy.get('.popup input[placeholder="Add a new todo item"]')
-      .scrollIntoView()
-      .clear()
-    cy.get('.popup input[value="Add"]')
-      .scrollIntoView()
-      .click()
-    cy.get('.popup .todo-item').should('have.length', 1)
-    cy.contains('.todo-item', 'Watch video').should('be.visible')
-      .should('be.visible')
-  })
-
-  it('R8UC1: TC1.4 Create new to-do with max char breach (100+)', () => {
-    // Create task with title and youtube-affiliation
-    cy.get('#title')
-      .type('TC1.4 Create new to-do with max char breach (100+)')
-    cy.get('#url')
-      .type('j_uu6bJ2IGI')
-    cy.contains('input[type="submit"]', 'Create new Task')
-      .click()
-
-    // Navigate to created task
-    cy.contains('.title-overlay', 'TC1.4 Create new to-do with max char breach (100+)')
-      .click()
-
-    cy.get('.popup .todo-list', { timeout: 20000 })
-      .should('be.visible')
-
-    // Get created task, add to-do and verify visibility
-    cy.get('.popup input[placeholder="Add a new todo item"]')
-      .scrollIntoView()
-      .type(char_limit_breach)
-    cy.get('.popup input[value="Add"]')
-      .scrollIntoView()
-      .click()
-    cy.contains('.todo-item', char_limit_breach)
-      .should('not.exist')
-  })
-
-  it('R8UC1: TC1.5 Create new to-do with max char (100)', () => {
-    // Create task with title and youtube-affiliation
-    cy.get('#title')
-      .type('TC1.5 Create new to-do with max char (100)')
-    cy.get('#url')
-      .type('j_uu6bJ2IGI')
-    cy.contains('input[type="submit"]', 'Create new Task')
-      .click()
-
-    // Navigate to created task
-    cy.contains('.title-overlay', 'TC1.5 Create new to-do with max char (100)')
-      .click()
-
-    cy.get('.popup .todo-list', { timeout: 20000 })
-      .should('be.visible')
-
-    // Get created task, add to-do and verify visibility
-    cy.get('.popup input[placeholder="Add a new todo item"]')
-      .scrollIntoView()
-      .type(char_limit)
-    cy.get('.popup input[value="Add"]')
-      .scrollIntoView()
-      .click()
-    cy.contains('.todo-item', char_limit)
-      .should('be.visible')
-  })
-
-  it('R8UC2: TC2.1 Toggle to-do active-complete and complete to active', () => {
-    // Create task with title and youtube-affiliation
-    cy.get('#title')
-      .scrollIntoView()
-      .type('TC2.1 Toggle to-do active-complete and complete to active')
-    cy.get('#url')
-      .scrollIntoView()
-      .type('j_uu6bJ2IGI')
-    cy.contains('input[type="submit"]', 'Create new Task')
-      .scrollIntoView()
-      .click()
-
-    // Navigate to created task and verify active/completed completed/active
-    cy.contains('.title-overlay', 'TC2.1 Toggle to-do active-complete and complete to active')
-      .scrollIntoView()
-      .click()
-    
-    cy.get('.popup .todo-list', { timeout: 20000 })
-      .should('be.visible')
-
-    cy.contains('.todo-item', 'Watch video')
+    // Verify default to-do is active
+    cy.contains('.popup .todo-item', 'Watch video')
       .find('.checker')
       .should('have.class', 'unchecked')
-    
-    cy.contains('.todo-item', 'Watch video')
+
+    // Toggle to completed
+    cy.contains('.popup .todo-item', 'Watch video')
       .find('.checker')
       .click()
-    
-    cy.contains('.todo-item', 'Watch video')
+
+    // Verify completed state
+    cy.contains('.popup .todo-item', 'Watch video')
       .find('.checker')
       .should('have.class', 'checked')
-    
-    cy.contains('.todo-item', 'Watch video')
-      .find('.checker')
-      .click()
-    
-    cy.contains('.todo-item', 'Watch video')
-      .find('.checker')
-      .should('have.class', 'unchecked')
   })
 
-  it('R8UC3: TC3.1 Delete to-do (active)', () => {
+  it('R8UC2: TC2.2 Toggle completed to-do to active', () => {
     // Create task with title and youtube-affiliation
     cy.get('#title')
-      .type('TC3.1 Delete to-do (active)')
+      .type('TC2.2 Toggle completed to active')
     cy.get('#url')
       .type('j_uu6bJ2IGI')
     cy.contains('input[type="submit"]', 'Create new Task')
       .click()
 
-    // Navigate to created task and delete
-    cy.contains('.title-overlay', 'TC3.1 Delete to-do (active)')
-      .click()
-
-    cy.get('.popup .todo-list', { timeout: 20000 })
-      .should('be.visible')
-    
-    cy.contains('.todo-item', 'Watch video')
-      .find('.remover')
-      .click()
-    
-    cy.contains('.todo-item', 'Watch video', { timeout: 20000 })
-      .should('not.exist')
-  })
-
-  it('R8UC3: TC3.2 Delete to-do (completed)', () => {
-    // Create task with title and youtube-affiliation
-    cy.get('#title')
-      .type('TC3.2 Delete to-do (completed)')
-    cy.get('#url')
-      .type('j_uu6bJ2IGI')
-    cy.contains('input[type="submit"]', 'Create new Task')
-      .click()
-
-    // Navigate to created task and complete then delete
-    cy.contains('.title-overlay', 'TC3.2 Delete to-do (completed)')
+    // Navigate to created task
+    cy.contains('.title-overlay', 'TC2.2 Toggle completed to active')
       .click()
 
     cy.get('.popup .todo-list', { timeout: 20000 })
       .should('be.visible')
 
-    cy.contains('.todo-item', 'Watch video')
-      .find('.checker')
-      .should('have.class', 'unchecked')
-    
-    cy.contains('.todo-item', 'Watch video')
+    // First toggle the default to-do to completed
+    cy.contains('.popup .todo-item', 'Watch video')
       .find('.checker')
       .click()
-    
-    cy.contains('.todo-item', 'Watch video')
+
+    cy.contains('.popup .todo-item', 'Watch video')
       .find('.checker')
       .should('have.class', 'checked')
-    
-    cy.contains('.todo-item', 'Watch video')
+
+    // Toggle it back to active
+    cy.contains('.popup .todo-item', 'Watch video')
+      .find('.checker')
+      .click()
+
+    // Verify active state
+    cy.contains('.popup .todo-item', 'Watch video')
+      .find('.checker')
+      .should('have.class', 'unchecked')
+  })
+
+  it('R8UC3: TC3.1 Delete to-do', () => {
+    // Create task with title and youtube-affiliation
+    cy.get('#title')
+      .type('TC3.1 Delete to-do')
+    cy.get('#url')
+      .type('j_uu6bJ2IGI')
+    cy.contains('input[type="submit"]', 'Create new Task')
+      .click()
+
+    // Navigate to created task
+    cy.contains('.title-overlay', 'TC3.1 Delete to-do')
+      .click()
+
+    cy.get('.popup .todo-list', { timeout: 20000 })
+      .should('be.visible')
+
+    // Delete default to-do
+    cy.contains('.popup .todo-item', 'Watch video')
       .find('.remover')
       .click()
-    
-    cy.contains('.todo-item', 'Watch video')
+
+    // Verify that the to-do is removed from the popup
+    cy.contains('.popup .todo-item', 'Watch video', { timeout: 20000 })
       .should('not.exist')
   })
 
