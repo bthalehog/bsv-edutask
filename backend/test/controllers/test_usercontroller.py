@@ -41,5 +41,6 @@ def test_multiple_emails_match(controller, mock_dao):
 def test_no_user_found(controller, mock_dao):
     mock_dao.find.return_value = []
 
-    with pytest.raises(IndexError):
-        controller.get_user_by_email("missing@gmail.com")
+    res = controller.get_user_by_email("missing@gmail.com")
+
+    assert res is None
